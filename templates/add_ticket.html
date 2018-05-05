@@ -24,12 +24,22 @@
       <br>
       <label for="extension">Extensión:</label>
       <input type="text" class="form-control" id="extension" name="extension" placeholder="Cuál es tú extensión para contactarte.">
+      <br> 
+      <div class=form-group">
+         <div class="input-group">
+        <span class="input-group-addon">Criticidad:</span>
+            <select name="comp_select" class="selectpicker form-control">
+              {% for o in data %}
+              <option value="{{ o.criticality }}">{{ o.criticality }}</option>
+              {% endfor %}
+            </select>
+  </div>
       <br>
       <label for="report">Reporte:</label>
       <textarea type="text" class="form-control" rows="7" id="report" name="report" placeholder="Ingresa un informe breve de lo que requieres y en que equipo"></textarea>
- 
+      
     </div>
-    <button type="submit" class="btn btn-success">Sign Up</button>
+    <button type="submit" class="btn btn-success">Enviar</button>
   </form>
  
   <br>
