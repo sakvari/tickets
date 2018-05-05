@@ -35,8 +35,6 @@ class ReusableForm(Form):
 @app.route("/", methods=['GET', 'POST'])
 def add_ticket():
     form = ReusableForm(request.form)
-    conn = mysql.connect() # let's create the MySQL connection:
-    cursor = conn.cursor() # let's create cursor 
 
     print form.errors
     if request.method == 'POST':
