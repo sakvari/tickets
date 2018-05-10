@@ -31,16 +31,7 @@ app.config['SECRET_KEY'] = '7d441f27d441f27567d441f2b6176a'
 
 
 
-class ReusableForm(Form):
-    name = TextField('Name:', validators=[validators.required()])
-    extension = TextField('Extension:', validators=[validators.required()])
-    email = TextField('Email:', validators=[validators.required()]) 
-    comp_select = TextField('comp_select:', validators=[validators.required()]) 
-    report = TextField('Report:', validators=[validators.required(), validators.Length(min=2, max=35)])
-    
-class ReusableFormLogin(Form):
-    user = TextField('User:', validators=[validators.required()])
-    password = TextField('Password:', validators=[validators.required()])
+
     
 @app.route("/", methods=['GET', 'POST'])
 def add_ticket():
@@ -59,8 +50,7 @@ def add_ticket():
             # Save the comment here.
             cursor.execute('''INSERT INTO ticket (name, email, extension, description, criticality) VALUES (%s, %s, %s, %s, %s)''', (name,email,extension,report,comp_select))
             conn.commit()
-        
-            #flash('Listo, Estamos listos para empezar a trabajar... ' + name + email + extension + report + comp_select)
+            flash('Listo, Estamos listos para empezar a trabajar... ' )
         else:
             flash('Error: Llena bien los datos por favor')
  
@@ -71,14 +61,20 @@ def add_ticket():
 def login():
     form = ReusableFormLogin(request.form)
     if request.method == 'POST':
-        user=request.form['user']
+        username=request.form['user']
         password=request.form['password']
-        if form.validate():
-            print("hola")
-        
+        conn = mysql.connect() # let's create the MySQL connection:
+        cursor = conn.cursor() # let's create cursor 
+        cursor.execute("SELECT name FROM users WHERE username ='"+username+"' AND password ='"+password+"'")
+        name = cursor.fetchone()
+        if name and len(name) is  1:
+             flash('Datos validos Hola ' + name[0])
         else:
-            flash('Error: Llena bien los datos por favor...')
+            flash('Error: Acceso incorrecto')
+            
     return render_template('login.html', form=form)
+
+
 @app.route("/MySQL")
 def test_mysql():
     try:
@@ -86,5 +82,23 @@ def test_mysql():
         return("okay")
     except Exception as e:
         return(str(e))
+
+
+
+### REusable forms
+
+class ReusableForm(Form):
+    name = TextField('Name:', validators=[validators.required()])
+    extension = TextField('Extension:', validators=[validators.required()])
+    email = TextField('Email:', validators=[validators.required()]) 
+    comp_select = TextField('comp_select:', validators=[validators.required()]) 
+    report = TextField('Report:', validators=[validators.required(), validators.Length(min=2, max=35)])
+    
+class ReusableFormLogin(Form):
+    user = TextField('User:', validators=[validators.required()])
+    password = TextField('Password:', validators=[validators.required()])
+    
+    
 if __name__ == "__main__":
     app.run()
+
