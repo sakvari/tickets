@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, request, Response
+from flask import Flask, render_template, flash, request, Response, redirect
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from flask.ext.mysql import MySQL
 
@@ -9,7 +9,7 @@ from flask.ext.mysql import MySQL
 # after i had create this table: create table ticket (id_ticket INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(40) NOT NULL, email VARCHAR(50) NOT NULL, extension VARCHAR(8), description TEXT,criticality VARCHAR(7) ,red_date TIMESTAMP, red_date_end TIMESTAMP, assignto VARCHAR(25), status VARCHAR(15) DEFAULT 'open');
 # this it's the  users table
 # create table users (id_ticket INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,name VARCHAR(35),username VARCHAR(25),password VARCHAR(35), email VARCHAR(40))
-# insert INTO users (name,username,password,email) VALUES ("arnoldo magana","maganaa","nocturna","maganaa@e-telecomm.com.mx")
+# insert INTO users (name,username,password,email) VALUES ("arnoldo magana","maganaa","nocturna","maganaa@e-telecomm.com.mx");
 # 
 # 
 DEBUG = True
@@ -63,12 +63,12 @@ def login():
     if request.method == 'POST':
         username=request.form['user']
         password=request.form['password']
-        conn = mysql.connect() # let's create the MySQL connection:
-        cursor = conn.cursor() # let's create cursor 
         cursor.execute("SELECT name FROM users WHERE username ='"+username+"' AND password ='"+password+"'")
         name = cursor.fetchone()
         if name and len(name) is  1:
              flash('Datos validos Hola ' + name[0])
+             cursor.execute("SELECT * from ticket where status = 'open'")
+             return  render_template('display_ticket.html', name=name[0],plop=cursor.fetchone() )
         else:
             flash('Error: Acceso incorrecto')
             
